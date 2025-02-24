@@ -5,9 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e4d4012e-8c2f-4ca9-ba37-8fa19c6398b9" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/components/auth/header.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/auth/social.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/components/auth/card-wrapper.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/auth/card-wrapper.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -71,7 +73,7 @@
       <option name="presentableId" value="Default" />
       <updated>1740432795846</updated>
       <workItem from="1740432797928" duration="26000" />
-      <workItem from="1740432824856" duration="3199000" />
+      <workItem from="1740432824856" duration="3638000" />
     </task>
     <servers />
   </component>
