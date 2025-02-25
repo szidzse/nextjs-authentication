@@ -18,6 +18,12 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
       if (token.sub && session.user) {
         session.user.id = token.sub;
       }
+
+      // By creating a 'role' property inside 'session.user', we can always have access to the role of the user.
+      if (token.role && session.user) {
+        session.user.role = token.role;
+      }
+
       return session;
     },
     async jwt({ token }) {
@@ -27,12 +33,11 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
 
       const existingUser = await getUserById(token.sub);
 
-      console.log(existingUser);
-
       if (!existingUser) {
         return token;
       }
 
+      // Obtain 'role' property from user object and set as a new property in token object
       token.role = existingUser.role;
 
       return token;
