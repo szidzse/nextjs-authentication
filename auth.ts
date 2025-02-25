@@ -2,6 +2,7 @@ import NextAuth from "next-auth";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "@/lib/prisma";
 import authConfig from "@/auth.config";
+import { getUserById } from "@/data/user";
 
 /**
  * Initializes NextAuth with PrismaAdapter (PrismaAdapter is used to allow Auth.js to manage user data via Prisma ORM.)
@@ -20,6 +21,20 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
       return session;
     },
     async jwt({ token }) {
+      if (!token.sub) {
+        return token;
+      }
+
+      const existingUser = await getUserById(token.sub);
+
+      console.log(existingUser);
+
+      if (!existingUser) {
+        return token;
+      }
+
+      token.role = existingUser.role;
+
       return token;
     },
   },
