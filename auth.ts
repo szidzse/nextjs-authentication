@@ -10,6 +10,19 @@ import authConfig from "@/auth.config";
  * Exports authentication functions for use in the application.
  */
 export const { auth, handlers, signIn, signOut } = NextAuth({
+  callbacks: {
+    async session({ token, session }) {
+      // The 'token' object 'sub' property is basically the userId.
+      // By creating an 'id' property inside 'session.user', we can always have access to the id of the user.
+      if (token.sub && session.user) {
+        session.user.id = token.sub;
+      }
+      return session;
+    },
+    async jwt({ token }) {
+      return token;
+    },
+  },
   adapter: PrismaAdapter(prisma),
   session: { strategy: "jwt" },
   ...authConfig,
