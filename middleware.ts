@@ -12,6 +12,8 @@ const { auth } = NextAuth(authConfig);
 /**
  * Middleware function that applies authentication logic
  * to specific routes defined in the matcher array.
+ * Authentication routes and public routes are accessible to all users.
+ * Non-public routes require authentication and cannot be accessed without logging in.
  */
 export default auth((req) => {
   const { nextUrl } = req;
