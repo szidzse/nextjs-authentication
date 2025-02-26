@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import { CardWrapper } from "@/components/auth/card-wrapper";
-import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { CardWrapper } from "@/components/auth/card-wrapper";
+import { useForm } from "react-hook-form";
+import { useSearchParams } from "next/navigation";
+import { useState, useTransition } from "react";
 import {
   Form,
   FormControl,
@@ -21,6 +22,11 @@ import { FormSuccess } from "@/components/form-success";
 import { login } from "@/actions/login";
 
 const LoginForm = () => {
+  const searchParams = useSearchParams();
+  const urlError =
+    searchParams.get("error") === "OAuthAccountNotLinked"
+      ? "Email already in use with different provider."
+      : "";
   const [error, setError] = useState<string | undefined>("");
   const [success, setSuccess] = useState<string | undefined>("");
   const [isPending, startTransition] = useTransition();
@@ -39,8 +45,9 @@ const LoginForm = () => {
 
     startTransition(() => {
       login(values).then((data) => {
-        setError(data.error);
-        setSuccess(data.success);
+        setError(data?.error);
+        // TODO: Add when we add 2FA
+        // setSuccess(data?.success);
       });
     });
   };
@@ -96,7 +103,7 @@ const LoginForm = () => {
             />
           </div>
 
-          <FormError message={error} />
+          <FormError message={error || urlError} />
           <FormSuccess message={success} />
           {/* Submit Button */}
           <Button disabled={isPending} type="submit" className="w-full">
