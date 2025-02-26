@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { UserButton } from "@/components/auth/user-button";
 
 export const Navbar = () => {
   const pathname = usePathname();
@@ -32,7 +33,7 @@ export const Navbar = () => {
           <Link href="/settings">Settings</Link>
         </Button>
       </div>
-      <p>User Button</p>
+      <UserButton />
     </nav>
   );
 };
