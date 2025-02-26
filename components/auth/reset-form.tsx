@@ -13,12 +13,12 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { ResetSchema } from "@/schemas";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { FormError } from "@/components/form-error";
 import { FormSuccess } from "@/components/form-success";
-import { login } from "@/actions/login";
+import { ResetSchema } from "@/schemas";
+import { reset } from "@/actions/reset";
 
 const ResetForm = () => {
   const [error, setError] = useState<string | undefined>("");
@@ -37,7 +37,7 @@ const ResetForm = () => {
     setSuccess("");
 
     startTransition(() => {
-      login(values).then((data) => {
+      reset(values).then((data) => {
         setError(data?.error);
         setSuccess(data?.success);
       });
