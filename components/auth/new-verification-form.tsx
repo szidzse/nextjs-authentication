@@ -15,6 +15,10 @@ export const NewVerificationForm = () => {
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
 
+  // Using useCallback helps prevent unnecessary re-renderings.
+  // At the first component render the onSubmit function is rendered.
+  // It runs useEffect which calls the onSubmit function, which can change the error and success states.
+  // If the states change, the onSubmit function is re-rendered, which leads to another useEffect.
   const onSubmit = useCallback(() => {
     if (success || error) {
       return;
