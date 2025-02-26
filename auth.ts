@@ -1,9 +1,10 @@
 import NextAuth from "next-auth";
-import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "@/lib/prisma";
+import { PrismaAdapter } from "@auth/prisma-adapter";
 import authConfig from "@/auth.config";
-import { getUserById } from "@/data/user";
 import { UserRole } from "@prisma/client";
+import { getUserById } from "@/data/user";
+import { getTwoFactorConfirmationByUserId } from "@/data/two-factor-confirmation";
 
 /**
  * Initializes NextAuth with PrismaAdapter (PrismaAdapter is used to allow Auth.js to manage user data via Prisma ORM.)
@@ -38,7 +39,25 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
         return false;
       }
 
-      // TODO: Add 2FA check
+      if (existingUser.isTwoFactorEnabled) {
+        const twoFactorConfirmation = await getTwoFactorConfirmationByUserId(
+          existingUser.id,
+        );
+
+        console.log({ twoFactorConfirmation });
+
+        if (!twoFactorConfirmation) {
+          return false;
+        }
+
+        // Delete two factor confirmation for next sign in
+        // Optional: add expiration time to TwoFactorConfirmation model
+        await prisma.twoFactorConfirmation.delete({
+          where: {
+            id: twoFactorConfirmation.id,
+          },
+        });
+      }
 
       return true;
     },
