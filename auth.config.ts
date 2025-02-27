@@ -45,4 +45,6 @@ export default {
       },
     }),
   ],
+  // Add edge-compatible metadata
+  trustHost: true,
 } satisfies NextAuthConfig;

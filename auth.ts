@@ -29,27 +29,19 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
   callbacks: {
     async signIn({ user, account }) {
       // Allow OAuth sign in without email verification
-      if (account?.provider !== "credentials") {
-        return true;
-      }
+      if (account?.provider !== "credentials") return true;
 
       const existingUser = await getUserById(user.id);
 
       // Prevent sign in without email verification
-      if (!existingUser?.emailVerified) {
-        return false;
-      }
+      if (!existingUser?.emailVerified) return false;
 
       if (existingUser.isTwoFactorEnabled) {
         const twoFactorConfirmation = await getTwoFactorConfirmationByUserId(
           existingUser.id,
         );
 
-        console.log({ twoFactorConfirmation });
-
-        if (!twoFactorConfirmation) {
-          return false;
-        }
+        if (!twoFactorConfirmation) return false;
 
         // Delete two factor confirmation for next sign in
         // Optional: add expiration time to TwoFactorConfirmation model
@@ -75,27 +67,20 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
       }
 
       if (session.user) {
-        session.user.isTwoFactorEnabled = token.isTwoFactorEnabled as boolean;
-      }
-
-      if (session.user) {
         session.user.name = token.name;
         session.user.email = token.email as string;
-        session.user.isOAuth = token.isOAuth as boolean;
+        session.user.isOAuth = !!token.isOAuth;
+        session.user.isTwoFactorEnabled = !!token.isTwoFactorEnabled;
       }
 
       return session;
     },
     async jwt({ token }) {
-      if (!token.sub) {
-        return token;
-      }
+      if (!token.sub) return token;
 
       const existingUser = await getUserById(token.sub);
 
-      if (!existingUser) {
-        return token;
-      }
+      if (!existingUser) return token;
 
       const existingAccount = await getAccountByUserId(existingUser.id);
 

@@ -1,15 +1,15 @@
 import { prisma } from "@/lib/prisma";
 
 export const getAccountByUserId = async (userId: string) => {
+  if (!userId) return null;
   try {
-    const account = await prisma.account.findFirst({
+    return await prisma.account.findFirst({
       where: {
         userId,
       },
     });
-
-    return account;
-  } catch {
+  } catch (error) {
+    console.error("Error fetching account by userId: ", error);
     return null;
   }
 };

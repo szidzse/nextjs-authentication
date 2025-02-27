@@ -1,13 +1,13 @@
 import { prisma } from "@/lib/prisma";
 
 export const getTwoFactorConfirmationByUserId = async (userId: string) => {
+  if (!userId) return null;
   try {
-    const twoFactorConfirmation = prisma.twoFactorConfirmation.findUnique({
+    return prisma.twoFactorConfirmation.findUnique({
       where: { userId },
     });
-
-    return twoFactorConfirmation;
-  } catch {
+  } catch (error) {
+    console.error("Error fetching two factor confirmation: ", error);
     return null;
   }
 };
