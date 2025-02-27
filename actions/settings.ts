@@ -19,6 +19,14 @@ export const settings = async (values: z.infer<typeof SettingsSchema>) => {
     return { error: "Unauthorized." };
   }
 
+  // Users who logged in with OAuth can't modify these fields
+  if (user.isOAuth) {
+    values.email = undefined;
+    values.password = undefined;
+    values.newPassword = undefined;
+    values.isTwoFactorEnabled = undefined;
+  }
+
   await prisma.user.update({
     where: {
       id: dbUser.id,
