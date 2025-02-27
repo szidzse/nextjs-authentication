@@ -19,7 +19,8 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useCurrentUser } from "@/hooks/use-current-user";
-import { toast } from "sonner";
+import { FormError } from "@/components/form-error";
+import { FormSuccess } from "@/components/form-success";
 
 const SettingsPage = () => {
   const user = useCurrentUser();
@@ -32,6 +33,9 @@ const SettingsPage = () => {
     resolver: zodResolver(SettingsSchema),
     defaultValues: {
       name: user?.name || undefined,
+      email: user?.email || undefined,
+      password: undefined,
+      newPassword: undefined,
     },
   });
 
@@ -41,13 +45,11 @@ const SettingsPage = () => {
         .then((data) => {
           if (data.error) {
             setError(data.error);
-            toast.error("Failed to update user infos.");
           }
 
           if (data.success) {
             update();
             setSuccess(data.success);
-            toast.success("User infos updated successfully.");
           }
         })
         .catch(() => {
@@ -65,6 +67,7 @@ const SettingsPage = () => {
         <Form {...form}>
           <form className="space-y-6" onSubmit={form.handleSubmit(onSubmit)}>
             <div className="space-y-4">
+              {/* Name */}
               <FormField
                 control={form.control}
                 name="name"
@@ -82,8 +85,72 @@ const SettingsPage = () => {
                   </FormItem>
                 )}
               />
+
+              {/* Email */}
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="john.doe@example.com"
+                        {...field}
+                        type="email"
+                        disabled={isPending}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Password */}
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Password</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="******"
+                        {...field}
+                        type="password"
+                        disabled={isPending}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* New Password */}
+              <FormField
+                control={form.control}
+                name="newPassword"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>New Password</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="******"
+                        {...field}
+                        type="password"
+                        disabled={isPending}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
-            <Button type="submit">Save</Button>
+            <FormError message={error} />
+            <FormSuccess message={success} />
+            <Button type="submit" disabled={isPending}>
+              Save
+            </Button>
           </form>
         </Form>
       </CardContent>
