@@ -5,6 +5,7 @@ import authConfig from "@/auth.config";
 import { UserRole } from "@prisma/client";
 import { getUserById } from "@/data/user";
 import { getTwoFactorConfirmationByUserId } from "@/data/two-factor-confirmation";
+import { getAccountByUserId } from "@/data/account";
 
 /**
  * Initializes NextAuth with PrismaAdapter (PrismaAdapter is used to allow Auth.js to manage user data via Prisma ORM.)
@@ -79,7 +80,8 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
 
       if (session.user) {
         session.user.name = token.name;
-        session.user.email = token.email;
+        session.user.email = token.email as string;
+        session.user.isOAuth = token.isOAuth as boolean;
       }
 
       return session;
@@ -95,6 +97,9 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
         return token;
       }
 
+      const existingAccount = await getAccountByUserId(existingUser.id);
+
+      token.isOAuth = !!existingAccount;
       token.name = existingUser.name;
       token.email = existingUser.email;
       // Obtain 'role' property from user object and set as a new property in token object
