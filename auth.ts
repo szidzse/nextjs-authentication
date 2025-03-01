@@ -3,10 +3,13 @@ import { prisma } from "@/lib/prisma";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import authConfig from "@/auth.config";
 import { UserRole } from "@prisma/client";
-import { getUserById } from "@/data/user";
+import { getUserByEmail, getUserById } from "@/data/user";
 // import { getTwoFactorConfirmationByUserId } from "@/data/two-factor-confirmation";
-import { getAccountByUserId } from "@/data/account";
-import { getTwoFactorConfirmationByUserId } from "@/data/two-factor-confirmation";
+import {
+  getAccountByProviderAndProviderAccountId,
+  getAccountByUserId,
+} from "@/data/account";
+// import { getTwoFactorConfirmationByUserId } from "@/data/two-factor-confirmation";
 
 /**
  * Initializes NextAuth with PrismaAdapter (PrismaAdapter is used to allow Auth.js to manage user data via Prisma ORM.)
@@ -28,7 +31,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
     },
   },
   callbacks: {
-    async signIn({ user, account }) {
+    /*async signIn({ user, account }) {
       // Allow OAuth sign in without email verification
       if (account?.provider !== "credentials") return true;
 
@@ -54,8 +57,8 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
       }
 
       return true;
-    },
-    /*async signIn({ user, account }) {
+    },*/
+    async signIn({ user, account }) {
       // Check if the login method is OAuth
       if (account && account.provider !== "credentials") {
         if (!user.email) return false;
@@ -63,25 +66,34 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
         const existingUser = await getUserByEmail(user.email);
 
         if (existingUser) {
-          // If an account already exists with this email address,
-          // we will link the new OAuth provider with the existing user account
-          await prisma.account.create({
-            data: {
-              userId: existingUser.id,
-              type: account.type,
-              provider: account.provider,
-              providerAccountId: account.providerAccountId,
-              refresh_token: account.refresh_token || null,
-              access_token: account.access_token || null,
-              expires_at: account.expires_at || null,
-              token_type: account.token_type || null,
-              scope: account.scope || null,
-              id_token: account.id_token || null,
-              session_state: account.session_state
-                ? String(account.session_state)
-                : null,
-            },
-          });
+          // Check if such an account already exists for the user
+          const existingAccount =
+            await getAccountByProviderAndProviderAccountId(
+              account.provider,
+              account.providerAccountId,
+            );
+
+          if (!existingAccount) {
+            // If an account already exists with this email address,
+            // we will link the new OAuth provider with the existing user account
+            await prisma.account.create({
+              data: {
+                userId: existingUser.id,
+                type: account.type,
+                provider: account.provider,
+                providerAccountId: account.providerAccountId,
+                refresh_token: account.refresh_token || null,
+                access_token: account.access_token || null,
+                expires_at: account.expires_at || null,
+                token_type: account.token_type || null,
+                scope: account.scope || null,
+                id_token: account.id_token || null,
+                session_state: account.session_state
+                  ? String(account.session_state)
+                  : null,
+              },
+            });
+          }
 
           // Automatically verify email if the user is logged in with OAuth
           if (!existingUser.emailVerified) {
@@ -101,7 +113,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
 
       // Login with credentials or create new user with OAuth registration
       return true;
-    },*/
+    },
     async session({ token, session }) {
       // The 'token' object 'sub' property is basically the userId.
       // By creating an 'id' property inside 'session.user', we can always have access to the id of the user.
