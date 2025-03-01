@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import { useRouter } from "next/navigation";
 import {
   Dialog,
@@ -21,7 +22,6 @@ interface LoginButtonProps {
 export const LoginButton = ({
   children,
   mode = "redirect",
-  asChild,
 }: LoginButtonProps) => {
   const router = useRouter();
 
