@@ -10,6 +10,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import LoginForm from "@/components/auth/login-form";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 
 interface LoginButtonProps {
   children: React.ReactNode;
@@ -33,6 +34,12 @@ export const LoginButton = ({
       <Dialog>
         <DialogTrigger asChild>{children}</DialogTrigger>
         <DialogContent className="p-0 w-auto bg-transparent border-none">
+          <VisuallyHidden>
+            <DialogHeader>
+              <DialogTitle></DialogTitle>
+              <DialogDescription></DialogDescription>
+            </DialogHeader>
+          </VisuallyHidden>
           <LoginForm />
         </DialogContent>
       </Dialog>
