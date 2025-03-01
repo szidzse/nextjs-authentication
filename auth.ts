@@ -3,9 +3,10 @@ import { prisma } from "@/lib/prisma";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import authConfig from "@/auth.config";
 import { UserRole } from "@prisma/client";
-import { getUserByEmail, getUserById } from "@/data/user";
+import { getUserById } from "@/data/user";
 // import { getTwoFactorConfirmationByUserId } from "@/data/two-factor-confirmation";
 import { getAccountByUserId } from "@/data/account";
+import { getTwoFactorConfirmationByUserId } from "@/data/two-factor-confirmation";
 
 /**
  * Initializes NextAuth with PrismaAdapter (PrismaAdapter is used to allow Auth.js to manage user data via Prisma ORM.)
@@ -27,7 +28,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
     },
   },
   callbacks: {
-    /*async signIn({ user, account }) {
+    async signIn({ user, account }) {
       // Allow OAuth sign in without email verification
       if (account?.provider !== "credentials") return true;
 
@@ -53,8 +54,8 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
       }
 
       return true;
-    }*/
-    async signIn({ user, account }) {
+    },
+    /*async signIn({ user, account }) {
       // Check if the login method is OAuth
       if (account && account.provider !== "credentials") {
         if (!user.email) return false;
@@ -100,7 +101,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
 
       // Login with credentials or create new user with OAuth registration
       return true;
-    },
+    },*/
     async session({ token, session }) {
       // The 'token' object 'sub' property is basically the userId.
       // By creating an 'id' property inside 'session.user', we can always have access to the id of the user.
